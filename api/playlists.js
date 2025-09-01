@@ -9,6 +9,10 @@ import {
 } from "#db/queries/playlists";
 import { createPlaylistTrack } from "#db/queries/playlists_tracks";
 import { getTracksByPlaylistId } from "#db/queries/tracks";
+import getUserFromToken from "#middleware/getUserFromToken";
+import requireUser from "#middleware/requireUser";
+
+router.use(getUserFromToken, requireUser);
 
 router
   .route("/")
