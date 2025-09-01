@@ -1,6 +1,6 @@
 import db from "#db/client";
 
-export async function createPlaylist(name, description, userId) {
+export async function createPlaylist(name, description, user_id) {
   const sql = `
   INSERT INTO playlists
     (name, description, user_id)
@@ -10,7 +10,7 @@ export async function createPlaylist(name, description, userId) {
   `;
   const {
     rows: [playlist],
-  } = await db.query(sql, [name, description, userId]);
+  } = await db.query(sql, [name, description, user_id]);
   return playlist;
 }
 
@@ -33,4 +33,27 @@ export async function getPlaylistById(id) {
     rows: [playlist],
   } = await db.query(sql, [id]);
   return playlist;
+}
+
+export async function getPlaylistsByUserId(userId) {
+  const sql = `
+    SELECT *
+    FROM playlists
+    WHERE user_id = $1
+    `;
+  const { rows: playlists } = await db.query(sql, [userId]);
+  return playlists;
+}
+
+export async function getPlaylistsByTrackIdAndUserId(trackId, userId) {
+  const sql = `
+        SELECT playlists.*, playlists_tracks.track_id
+        FROM playlists
+        JOIN playlists_tracks ON playlists.id = playlists_tracks.playlist_id
+        WHERE
+            playlists_tracks.track_id = $1
+            AND playlists.user_id = $2
+        `;
+  const { rows: playlists } = await db.query(sql, [trackId, userId]);
+  return playlists;
 }
